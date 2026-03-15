@@ -1,81 +1,91 @@
-# Clothing Rating and Outfit Designer
+# Clothing Rating & Outfit Designer
 
-A Python application for rating clothing items and creating outfit combinations with weather conditions. Data is saved to CSV files for AI training.
+AI-ready dataset generation tool for fashion outfit compatibility prediction.
 
-## Features
+## Quick Start
 
-### Mode 1: Clothing Item Rating
-- Display clothing images one at a time
-- Rate each item on 5 characteristics (0-15 scale):
-  - Warm ↔ Cool
-  - Elegant ↔ Lively
-  - Formal ↔ Informal
-  - Baggy ↔ Loose
-  - Simple ↔ Fancy
-- Data saved to `clothing_ratings.csv`
+### 1. Get Dataset
 
-### Mode 2: Outfit Creation
-- View 2 sets of 3 tops and 3 bottoms
-- Create outfit combinations
-- Rate based on weather conditions:
-  - Temperature: -15 to 40
-  - Rain: 0-100
-  - Cloud: 0-100
-- Data saved to `outfit_ratings.csv`
+```bash
+python organize_dataset.py
+# Places your zip file's images into TrainingPictures/Tops and Bottoms
+# Auto-samples 100 tops + 100 bottoms for variety
+```
+
+### 2. Rate Clothing
+
+```bash
+python clothing_rating_app.py
+```
+
+**Mode 1**: Rate individual items (5 characteristics, 0-15 scale each)
+**Mode 2**: Create outfits + rate outfit harmony (5 sliders for combined looks)
+
+### 3. Use Data for ML
+
+```python
+import pandas as pd
+df = pd.read_csv('output/outfit_ratings.csv')
+# 18 ML-ready columns with top/bottom/outfit characteristics + weather
+```
+
+## Files
+
+### Python Scripts
+
+- `clothing_rating_app.py` - Main rating UI (tkinter)
+- `dataset_downloader_v3.py` - Kaggle dataset downloader
+- `organize_dataset.py` - Quick zip organizer (100 tops + 100 bottoms)
+
+### Output
+
+- `output/clothing_ratings.csv` - Individual item ratings (6 columns)
+- `output/outfit_ratings.csv` - Complete outfit data (18 columns, ML-ready)
+
+## CSV Format
+
+### clothing_ratings.csv
+
+```
+image, Warm-Cool, Elegant-Lively, Formal-Informal, Baggy-Loose, Feminine-Masculine
+```
+
+### outfit_ratings.csv (18 columns)
+
+```
+top_image, bottom_image,
+top_warm_cool, top_elegant_lively, top_formal_informal, top_baggy_loose, top_feminine_masculine,
+bottom_warm_cool, bottom_elegant_lively, bottom_formal_informal, bottom_baggy_loose, bottom_feminine_masculine,
+outfit_warm_cool, outfit_elegant_lively, outfit_formal_informal, outfit_baggy_loose, outfit_feminine_masculine,
+temperature, rain, cloud
+```
+
+## Workflow
+
+1. **Download**: Get dataset from Kaggle (or use zip you have)
+2. **Organize**: Run `organize_dataset.py` to sort into Tops/Bottoms
+3. **Rate Items**: Use Mode 1 to rate individual pieces (~100 items, 10 min)
+4. **Create Outfits**: Use Mode 2 to rate outfit combinations (~50 outfits, 20 min)
+5. **Train ML**: Use outfit_ratings.csv with sklearn/TensorFlow
+
+## Requirements
+
+- Python 3.7+
+- tkinter (Arch: `sudo pacman -S tk`)
+- See requirements.txt for pip packages
 
 ## Installation
 
-1. Make sure you have Python 3.7+ installed
-2. Install required dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+```bash
+pip install -r requirements.txt
+# On Arch: sudo pacman -S tk
+python clothing_rating_app.py
+```
 
-## Usage
+## Tips
 
-1. Place your clothing images in the `TrainingPictures` folder
-2. Run the application:
-   ```
-   python clothing_rating_app.py
-   ```
-3. Select a mode:
-   - **Mode 1**: Rate individual clothing items
-   - **Mode 2**: Create outfit combinations
-   - **View CSV Files**: Open the output folder
-
-## Output Files
-
-### clothing_ratings.csv
-Contains ratings for individual clothing items:
-- `image`: Image filename
-- `Warm-Cool`: Rating (0-15)
-- `Elegant-Lively`: Rating (0-15)
-- `Formal-Informal`: Rating (0-15)
-- `Baggy-Loose`: Rating (0-15)
-- `Simple-Fancy`: Rating (0-15)
-
-### outfit_ratings.csv
-Contains outfit combinations with weather:
-- `set1_top`: Top image filename
-- `set1_bottom`: Bottom image filename
-- `set2_top`: Top image filename
-- `set2_bottom`: Bottom image filename
-- `temperature`: -15 to 40
-- `rain`: 0-100
-- `cloud`: 0-100
-- `timestamp`: When the outfit was rated
-
-## Image Organization
-
-The application assumes:
-- First half of images = tops
-- Second half of images = bottoms
-
-If your images aren't organized this way, you can modify the split in the `__init__` method of the `ClothingRatingApp` class.
-
-## Notes
-
-- All data is saved to the `output` folder
-- Images are displayed at appropriate sizes for easy viewing
-- Current values on sliders are shown for quick reference
-- You can return to the main menu at any time
+- All ratings use 0-15 scale (consistent across all features)
+- Weather randomizes for each outfit
+- Output CSVs append data (never overwrite)
+- Mode 1 rates individual items
+- Mode 2 rates complete outfit combinations
